@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<!-- saved from url=(0079)http://www.rose-hulman.edu/~fisherds/webdev/Exercises/animations/exercise2.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Exercise 2</title>
+    <style type="text/css">
+      html, body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+      }
+      body {
+        display: -webkit-flex;
+        display: flex;
+        -webkit-justify-content: center;
+        justify-content: center;
+        -webkit-align-items: center;
+        align-items: center;
+        background-color: #333;
+      }
+      body {
+        -webkit-perspective: 4000px;
+        perspective: 4000px;
+        -webkit-perspective-origin: 50% -200%;
+        perspective-origin: 50% -200%;
+      }
+	    .cube {
+		    width: 300px;
+		    height: 300px;
+		    -webkit-transform-style: preserve-3d;
+		    transform-style: preserve-3d;
+		    /*
+		    -webkit-transform: rotateY(45deg);
+		    transform: rotateY(45deg);
+		    */
+	    }
+			.cube div {
+		    position:absolute;
+		    z-index:1;
+		    top:0;
+		    left:0;
+		    height:300px;
+		    width:300px;
+		    -webkit-backface-visibility:show;
+		    -moz-backface-visibility:show;
+		    border:1px solid #fff;
+			}
+			.side:nth-child(1)  {
+        background-color: #800; /* red */
+			  -webkit-transform: rotateX(90deg) translateZ(150px);
+			  transform: rotateX(90deg) translateZ(150px);
+			}
+			.side:nth-child(2) {
+        background-color: #cc0; /* yellow */
+			  -webkit-transform: translateZ(150px);
+			  transform: translateZ(150px);
+			}
+			.side:nth-child(3) {
+        background-color: #080; /* green */
+			  -webkit-transform: rotateY(90deg) translateZ(150px);
+			  transform: rotateY(90deg) translateZ(150px);
+			}
+			.side:nth-child(4) {
+        background-color: #008; /* blue */
+			  -webkit-transform: rotateY(180deg) translateZ(150px);
+			  transform: rotateY(180deg) translateZ(150px);
+			}
+			.side:nth-child(5) {
+        background-color: #808; /* magenta */
+			  -webkit-transform: rotateY(-90deg) translateZ(150px);
+			  transform: rotateY(-90deg) translateZ(150px);
+			}   
+			.side:nth-child(6) {
+        background-color: #088; /* cyan */
+			  -webkit-transform: rotateX(-90deg) translateZ(150px);
+			  transform: rotateX(-90deg) translateZ(150px);
+			} 
+      .side:hover {
+        box-shadow: 0 0 5px 5px yellow;
+      }
+      .side {
+        /* Decorative */
+        border: 2px solid #333;
+        border-radius: 50px;
+        background-image: -webkit-linear-gradient(-45deg,  hsla(0,0%,100%,.75) 0%,hsla(0,0%,100%,0) 100%);
+        background-image: linear-gradient(135deg,  hsla(0,0%,100%,.75) 0%,hsla(0,0%,100%,0) 100%);
+        text-align: center;
+        font: 8em/300px "Comic Sans MS", san-serif;
+        text-shadow: 2px 2px 5px gray;
+        opacity: 0.9;
+      }
+      .cube {
+        /*
+        -webkit-animation: rotateAboutY 5s linear infinite;
+        animation: rotateAboutY 5s linear infinite;
+        */
+        /*
+        -webkit-animation: rotateAboutX 5s linear infinite;
+        animation: rotateAboutX 5s linear infinite;
+        */
+        /*
+        -webkit-animation: rotateAboutY 5s linear 0 1, rotateAboutX 5s linear 5s infinite;
+        animation: rotateAboutY 5s linear 0 1, rotateAboutX 5s linear 5s infinite;
+        */
+        
+        -webkit-animation: rotateAboutYWithYOffset 5s linear 0 1, rotateAboutXWithYOffset 5s linear 5s infinite;
+        animation: rotateAboutYWithYOffset 5s linear 0 1, rotateAboutXWithYOffset 5s linear 5s infinite;
+        
+      }
+      @-webkit-keyframes rotateAboutY {
+        0% {
+          -webkit-transform: rotateY(0deg);
+          transform: rotateY(0deg);
+        }
+        100% {
+          -webkit-transform: rotateY(360deg);
+          transform: rotateY(360deg);
+        }
+      }
+      @keyframes rotateAboutY {
+        0% {
+          -webkit-transform: rotateY(0deg);
+          transform: rotateY(0deg);
+        }
+        100% {
+          -webkit-transform: rotateY(360deg);
+          transform: rotateY(360deg);
+        }
+      }
+      @-webkit-keyframes rotateAboutX {
+        0% {
+          -webkit-transform: rotateX(0deg);
+          transform: rotateX(0deg);
+        }
+        100% {
+          -webkit-transform: rotateX(360deg);
+          transform: rotateX(360deg);
+        }
+      }
+      @keyframes rotateAboutX {
+        0% {
+          -webkit-transform: rotateX(0deg);
+          transform: rotateX(0deg);
+        }
+        100% {
+          -webkit-transform: rotateX(360deg);
+          transform: rotateX(360deg);
+        }
+      }
+      @-webkit-keyframes rotateAboutYWithYOffset {
+        0% {
+          -webkit-transform: rotateY(45deg);
+          transform: rotateY(45deg);
+        }
+        100% {
+          -webkit-transform: rotateY(405deg);
+          transform: rotateY(405deg);
+        }
+      }
+      @keyframes rotateAboutYWithYOffset {
+        0% {
+          -webkit-transform: rotateY(45deg);
+          transform: rotateY(405deg);
+        }
+        100% {
+          -webkit-transform: rotateY(360deg);
+          transform: rotateY(360deg);
+        }
+      }
+      @-webkit-keyframes rotateAboutXWithYOffset {
+        0% {
+          -webkit-transform: rotateY(45deg) rotateX(0deg);
+          transform: rotateY(45deg) rotateX(0deg);
+        }
+        100% {
+          -webkit-transform: rotateY(45deg) rotateX(360deg);
+          transform: rotateY(45deg) rotateX(360deg);
+        }
+      }
+      @keyframes rotateAboutXWithYOffset {
+        0% {
+          -webkit-transform: rotateY(45deg) rotateX(0deg);
+          transform: rotateY(45deg) rotateX(0deg);
+        }
+        100% {
+          -webkit-transform: rotateY(45deg) rotateX(360deg);
+          transform: rotateY(45deg) rotateX(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+	  <div class="cube">
+      <div class="side">1</div>
+      <div class="side">2</div>
+      <div class="side">3</div>
+      <div class="side">4</div>
+      <div class="side">5</div>
+      <div class="side">6</div>
+	  </div>
+  
+
+    </body></html>
