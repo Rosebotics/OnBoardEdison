@@ -5,6 +5,9 @@ var io = require('socket.io')(app, {
   origins: '*:*'
 });
 var fs = require('fs');
+var mraa = require('mraa'); //require mraa
+console.log('MRAA Version: ' + mraa.getVersion());
+var myOnboardLed = new mraa.Gpio(13);
 
 app.listen(8080);
 
@@ -34,9 +37,11 @@ io.on('connection', function (socket) {
     console.log(data);
     if (data.msg === "On") {
       console.log("TODO: Turn the LED On");
+	 myOnboardLed.write(1);
       socket.emit('real-btn', { message: 'You want the LED on.  I hear you.  -- server' });
     } else if (data.msg === "Off") {
       console.log("TODO: Turn the LED Off");
+ 	myOnboardLed.write(0);
       socket.emit('real-btn', { message: 'You want the LED OFF.  I hear you.  -- server' });
     } else if (data.msg === "Hello") {
       socket.emit('real-btn', { message: 'Hello back.  -- server' });
