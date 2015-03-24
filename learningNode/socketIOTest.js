@@ -8,6 +8,7 @@ var fs = require('fs');
 var mraa = require('mraa'); //require mraa
 console.log('MRAA Version: ' + mraa.getVersion());
 var myOnboardLed = new mraa.Gpio(13);
+myOnboardLed.dir(mraa.DIR_OUT); //set the gpio direction to output
 
 app.listen(8080);
 
