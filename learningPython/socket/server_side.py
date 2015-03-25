@@ -1,7 +1,11 @@
 # from: http://pymotw.com/2/socket/tcp.html
-
+import mraa
+import time
 import socket
 import sys
+
+x = mraa.Gpio(13)
+x.dir(mraa.DIR_OUT)
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -26,6 +30,12 @@ while True:
       			data = connection.recv(16)
       			print >>sys.stderr, 'received "%s"' % data
       			if data:
+                                        if data.lower() == "on":
+                                                x.write(1)
+                                                print >>sys.stderr, 'TODO turn on LED'
+                                        elif data.lower() == "off":
+                                                x.write(0)
+                                                print >>sys.stderr, 'TODO turn off LED'
         				print >>sys.stderr, 'sending data back to the client'
         				connection.sendall(data)
       			else:
