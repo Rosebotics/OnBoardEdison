@@ -1,3 +1,5 @@
+# from: http://pymotw.com/2/socket/tcp.html
+
 import socket
 import sys
 
@@ -5,7 +7,7 @@ import sys
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Bind the socket to the port
-server_address = ('localhost', 9090)
+server_address = ('robo-mickey.rose-hulman.edu', 9090)
 print >>sys.stderr, 'starting up on %s port %s' % server_address
 sock.bind(server_address)
 
