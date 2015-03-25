@@ -12,9 +12,10 @@ print >>sys.stderr, 'connecting to %s port %s' % server_address
 sock.connect(server_address)
 
 try:
-    
     # Send data
-    message = 'This is the message.  It will be repeated.'
+    #message = 'Hello'
+    message = 'On'
+    #message = 'Off'
     print >>sys.stderr, 'sending "%s"' % message
     sock.sendall(message)
 
