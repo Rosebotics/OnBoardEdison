@@ -1,51 +1,96 @@
-var app = require('http').createServer(handler)
-var io = require('socket.io')(app, {
-  log: false,
-  agent: false,
-  origins: '*:*'
-});
-var fs = require('fs');
-var mraa = require('mraa'); //require mraa
-console.log('MRAA Version: ' + mraa.getVersion());
+var app = require("http").createServer(handler)
+var io = require("socket.io")(app);
+
+var fs = require("fs");
+var mraa = require("mraa"); // require mraa
+console.log("MRAA Version: " + mraa.getVersion());
+
+// Setup the existing Arduino Edison LED as an output.
 var myOnboardLed = new mraa.Gpio(13);
-myOnboardLed.dir(mraa.DIR_OUT); //set the gpio direction to output
+myOnboardLed.dir(mraa.DIR_OUT); // set the gpio direction to output
+
+// Setup for I2C communication.
+var i2c = new m.I2c(0)
+i2c.address(0x77)
+
+// initialize device
+if (i2c.readReg(char("0xd0")) != char("0x55")) {
+  console.log("error");
+}
+
 
 app.listen(8080);
 
-function handler (req, res) {
-  fs.readFile(__dirname + '/index.html',
-  function (err, data) {
+function handler(req, res) {
+  fs.readFile(__dirname + "/index.html", function(err, data) {
     if (err) {
       res.writeHead(500);
-      return res.end('Error loading index.html');
+      return res.end("Error loading index.html");
     }
 
     res.writeHead(200);
-    // Trying to fix an access control origin error message.
-    // None of this helped, my issue was solved by modifying the client code.
-//    res.statusCode = 200;
-//    res.setHeader("Access-Control-Allow-Origin", "*");
-//    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-//    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     res.end(data);
   });
 }
 
-
-io.on('connection', function (socket) {
-  socket.emit('greeting', { message: 'You are now connected.  -- server' });
-  socket.on('btn-control', function (data) {
+io.on("connection", function(socket) {
+  socket.emit("greeting", {
+    message : "You are now connected.  -- server"
+  });
+  socket.on("btn-control", function(data) {
     console.log(data);
     if (data.msg === "On") {
       console.log("TODO: Turn the LED On");
-	 myOnboardLed.write(1);
-      socket.emit('real-btn', { message: 'You want the LED on.  I hear you.  -- server' });
+      myOnboardLed.write(1);
+      socket.emit("real-btn", {
+        message : "You want the LED on.  I hear you.  -- server"
+      });
     } else if (data.msg === "Off") {
       console.log("TODO: Turn the LED Off");
- 	myOnboardLed.write(0);
-      socket.emit('real-btn', { message: 'You want the LED OFF.  I hear you.  -- server' });
+      myOnboardLed.write(0);
+      socket.emit("real-btn", {
+        message : "You want the LED OFF.  I hear you.  -- server"
+      });
     } else if (data.msg === "Hello") {
-      socket.emit('real-btn', { message: 'Hello back.  -- server' });
-    } 
+      socket.emit("real-btn", {
+        message : "Hello back.  -- server"
+      });
+    } else if (data.msg === "Forward") {
+      socket.emit("real-btn", {
+        message : "You want to go Forward.  I hear you.  -- server"
+      });
+       i2c.writeReg(
+          char("0x7e"), // Start byte
+          char("0x04"), // Length
+          char("0x00"), // Command for DrivePwm
+          char("0x03"), // Both motors are forward
+          char("0xc8"), // Left duty cycle is 200 / 255
+          char("0xc8"), // Right duty cycle is 200 / 255
+          char("0x6d")); // Manually calculate crc 0+3+200+200 = 403 (147) --> crc = 109
+    } else if (data.msg === "Stop") {
+      socket.emit("real-btn", {
+        message : "You want to stop.  I hear you.  -- server"
+      });
+      i2c.writeReg(
+          char("0x7e"), // Start byte
+          char("0x04"), // Length
+          char("0x00"), // Command for DrivePwm
+          char("0x03"), // Both motors are forward (sure)
+          char("0x00"), // Left duty cycle is 0 / 255
+          char("0x00"), // Right duty cycle is 0 / 255
+          char("0xfd")); // Manually calculate crc 0+3+0+0 = 3 --> crc = 253
+    } else if (data.msg === "Reverse") {
+      socket.emit("real-btn", {
+        message : "You want to go in Reverse.  I hear you.  -- server"
+      });
+      i2c.writeReg(
+          char("0x7e"), // Start byte
+          char("0x04"), // Length
+          char("0x00"), // Command for DrivePwm
+          char("0x00"), // Both motors are forward
+          char("0xc8"), // Left duty cycle is 200 / 255
+          char("0xc8"), // Right duty cycle is 200 / 255
+          char("0x70")); // Manually calculate crc 0+0+200+200 = 400 (144) --> crc = 112
+    }
   });
 });
