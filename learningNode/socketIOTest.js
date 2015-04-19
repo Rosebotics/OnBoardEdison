@@ -10,14 +10,11 @@ var myOnboardLed = new mraa.Gpio(13);
 myOnboardLed.dir(mraa.DIR_OUT); // set the gpio direction to output
 
 // Setup for I2C communication.
-var i2c = new m.I2c(0)
-i2c.address(0x77)
+var i2c = new mraa.I2c(0)
+i2c.address(0x04)
 
-// initialize device
-if (i2c.readReg(char("0xd0")) != char("0x55")) {
-  console.log("error");
-}
-
+// helper function to go from hex val to dec
+function char(x) { return parseInt(x, 16); }
 
 app.listen(8080);
 
@@ -40,13 +37,11 @@ io.on("connection", function(socket) {
   socket.on("btn-control", function(data) {
     console.log(data);
     if (data.msg === "On") {
-      console.log("TODO: Turn the LED On");
       myOnboardLed.write(1);
       socket.emit("real-btn", {
         message : "You want the LED on.  I hear you.  -- server"
       });
     } else if (data.msg === "Off") {
-      console.log("TODO: Turn the LED Off");
       myOnboardLed.write(0);
       socket.emit("real-btn", {
         message : "You want the LED OFF.  I hear you.  -- server"
@@ -59,38 +54,55 @@ io.on("connection", function(socket) {
       socket.emit("real-btn", {
         message : "You want to go Forward.  I hear you.  -- server"
       });
-       i2c.writeReg(
-          char("0x7e"), // Start byte
-          char("0x04"), // Length
-          char("0x00"), // Command for DrivePwm
-          char("0x03"), // Both motors are forward
-          char("0xc8"), // Left duty cycle is 200 / 255
-          char("0xc8"), // Right duty cycle is 200 / 255
+       i2c.writeByte(
+          char("0x7e")); // Start byte
+       i2c.writeByte(
+          char("0x04")); // Length
+       i2c.writeByte(
+          char("0x00")); // Command for DrivePwm
+       i2c.writeByte(
+          char("0x03")); // Both motors are forward
+       i2c.writeByte(
+          char("0xc8")); // Left duty cycle is 200 / 255
+       i2c.writeByte(
+          char("0xc8")); // Right duty cycle is 200 / 255
+       i2c.writeByte(
           char("0x6d")); // Manually calculate crc 0+3+200+200 = 403 (147) --> crc = 109
     } else if (data.msg === "Stop") {
       socket.emit("real-btn", {
         message : "You want to stop.  I hear you.  -- server"
       });
-      i2c.writeReg(
-          char("0x7e"), // Start byte
-          char("0x04"), // Length
-          char("0x00"), // Command for DrivePwm
-          char("0x03"), // Both motors are forward (sure)
-          char("0x00"), // Left duty cycle is 0 / 255
-          char("0x00"), // Right duty cycle is 0 / 255
-          char("0xfd")); // Manually calculate crc 0+3+0+0 = 3 --> crc = 253
+       i2c.writeByte(
+          char("0x7e")); // Start byte
+       i2c.writeByte(
+          char("0x04")); // Length
+       i2c.writeByte(
+          char("0x00")); // Command for DrivePwm
+       i2c.writeByte(
+          char("0x03")); // Both motors are forward (sure)
+       i2c.writeByte(
+          char("0x00")); // Left duty cycle is 0 / 255
+       i2c.writeByte(
+          char("0x00")); // Right duty cycle is 0 / 255
+       i2c.writeByte(
+          char("0xfd"));  // Manually calculate crc 0+3+0+0 = 3 --> crc = 253
     } else if (data.msg === "Reverse") {
       socket.emit("real-btn", {
         message : "You want to go in Reverse.  I hear you.  -- server"
       });
-      i2c.writeReg(
-          char("0x7e"), // Start byte
-          char("0x04"), // Length
-          char("0x00"), // Command for DrivePwm
-          char("0x00"), // Both motors are forward
-          char("0xc8"), // Left duty cycle is 200 / 255
-          char("0xc8"), // Right duty cycle is 200 / 255
-          char("0x70")); // Manually calculate crc 0+0+200+200 = 400 (144) --> crc = 112
+       i2c.writeByte(
+          char("0x7e")); // Start byte
+       i2c.writeByte(
+          char("0x04")); // Length
+       i2c.writeByte(
+          char("0x00")); // Command for DrivePwm
+       i2c.writeByte(
+          char("0x00")); // Both motors are forward
+       i2c.writeByte(
+          char("0xc8")); // Left duty cycle is 200 / 255
+       i2c.writeByte(
+          char("0xc8")); // Right duty cycle is 200 / 255
+       i2c.writeByte(char("0x70")); // Manually calculate crc 0+0+200+200 = 400 (144) --> crc = 112
     }
   });
 });

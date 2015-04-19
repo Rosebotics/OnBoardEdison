@@ -53,7 +53,7 @@ body {
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    var socket = io('http://robo-mickey.rose-hulman.edu:8080');
+    var socket = io('http://robo-mickey.local:8080');
     socket.on('greeting', function (data) {
       console.log("Greeting: " + data.message);
       $("#responses").text(data.message);
